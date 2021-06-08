@@ -16,7 +16,6 @@ limitations under the License.
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
@@ -42,25 +41,59 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("fuzz called")
+		log.Println("fuzzing")
 
-		var d net.Dialer
-		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-		defer cancel()
+		//var d net.Dialer
+		//ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
+		//defer cancel()
 
-		conn, err := d.DialContext(ctx, "tcp", ip+":"+port)
-		if err != nil {
-			log.Fatalf("Faied to dial: %v", err)
-		}
-		defer conn.Close()
+		//conn, err := d.DialContext(ctx, "tcp", ip+":"+port)
 
-		for n := 100; ; n += 100 {
+		//go func() {
+
+		//	var rcv []byte
+		//	for {
+		//		rn, err := conn.Read(rcv)
+		//		if err != nil {
+		//			log.Println("Can't read more because: ", err)
+		//		}
+		//		log.Println("Read bytes: ", rn)
+		//		log.Println("Read: ", string(rcv))
+		//		time.Sleep(2 * time.Second)
+
+		//	}
+		//}()
+
+		var n = 1800
+		for ; ; n += 100 {
+			conn, err := net.DialTimeout("tcp", ip+":"+port, 1000000*time.Microsecond)
+			if err != nil {
+				log.Fatalf("Faied to dial: %v", err)
+			}
+			log.Println("Dialed")
+			defer conn.Close()
+
 			garbage := strings.Repeat("A", n)
-			if _, err := conn.Write([]byte(command + garbage)); err != nil {
-				log.Printf("crashed at:%d bytes\n", n)
-				log.Fatal(err)
+
+			if err := conn.SetReadDeadline(time.Now().Add(1000000 * time.Microsecond)); err != nil {
+				log.Println("Can't set write deadline: ", err)
 			}
 
+			if _, err := conn.Write([]byte(command + garbage)); err != nil {
+				log.Println("Can't write more because: ", err)
+				break
+			}
+			rcv := make([]byte, 1024)
+			_, err = conn.Read(rcv)
+			if err != nil {
+				log.Println("Can't read: ", err)
+				break
+			}
+			log.Println("Read: ", string(rcv))
+			time.Sleep(1 * time.Second)
+
 		}
+		log.Printf("crashed at:%d bytes\n", n)
 	},
 }
 
