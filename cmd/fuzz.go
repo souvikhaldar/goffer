@@ -28,6 +28,7 @@ import (
 var ip string
 var port string
 var command string
+var poolSize int
 
 // fuzzCmd represents the fuzz command
 var fuzzCmd = &cobra.Command{
@@ -40,60 +41,65 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("fuzz called")
-		log.Println("fuzzing")
+		log.Println("Fuzzing the machine: ", ip)
+		conn, err := net.DialTimeout("tcp", ip+":"+port, 1000000*time.Microsecond)
+		if err != nil {
+			log.Fatalf("Faied to dial: %v", err)
+		}
+		fmt.Println("Command: ", command)
+		defer conn.Close()
+		crashed := make(chan int)
+		pool := make(chan int, poolSize)
+		fmt.Println("Pool size: ", poolSize)
 
-		//var d net.Dialer
-		//ctx, cancel := context.WithTimeout(context.Background(), 4*time.Second)
-		//defer cancel()
+		done := make(chan bool)
+		go func() {
+			cd := <-crashed
+			log.Println("***********")
+			log.Printf("crashed at:%d bytes\n", cd)
+			log.Println("***********")
+			done <- true
+			return
 
-		//conn, err := d.DialContext(ctx, "tcp", ip+":"+port)
+		}()
 
-		//go func() {
+		notCrashed := true
+		for n := 100; notCrashed; n += 100 {
+			pool <- 1
+			go func(n int, pool chan int) {
+				defer func() {
+					<-pool
+				}()
 
-		//	var rcv []byte
-		//	for {
-		//		rn, err := conn.Read(rcv)
-		//		if err != nil {
-		//			log.Println("Can't read more because: ", err)
-		//		}
-		//		log.Println("Read bytes: ", rn)
-		//		log.Println("Read: ", string(rcv))
-		//		time.Sleep(2 * time.Second)
+				log.Println("Fuzzing: ", n)
+				garbage := strings.Repeat("A", n)
 
-		//	}
-		//}()
+				if err := conn.SetDeadline(time.Now().Add(1000000 * time.Microsecond)); err != nil {
+					log.Println("Can't set write deadline: ", err)
+					return
+				}
 
-		var n = 1800
-		for ; ; n += 100 {
-			conn, err := net.DialTimeout("tcp", ip+":"+port, 1000000*time.Microsecond)
-			if err != nil {
-				log.Fatalf("Faied to dial: %v", err)
-			}
-			log.Println("Dialed")
-			defer conn.Close()
+				if _, err := conn.Write([]byte(command + garbage)); err != nil && notCrashed {
+					//log.Println("Can't write more because: ", err)
+					notCrashed = false
+					crashed <- n
+					return
+				}
+				rcv := make([]byte, 2048)
+				_, err = conn.Read(rcv)
+				if err != nil && notCrashed {
+					//log.Println("Can't read: ", err)
+					notCrashed = false
+					crashed <- n
+					return
+				}
 
-			garbage := strings.Repeat("A", n)
-
-			if err := conn.SetReadDeadline(time.Now().Add(1000000 * time.Microsecond)); err != nil {
-				log.Println("Can't set write deadline: ", err)
-			}
-
-			if _, err := conn.Write([]byte(command + garbage)); err != nil {
-				log.Println("Can't write more because: ", err)
-				break
-			}
-			rcv := make([]byte, 1024)
-			_, err = conn.Read(rcv)
-			if err != nil {
-				log.Println("Can't read: ", err)
-				break
-			}
-			log.Println("Read: ", string(rcv))
-			time.Sleep(1 * time.Second)
+			}(n, pool)
 
 		}
-		log.Printf("crashed at:%d bytes\n", n)
+
+		<-done
+		return
 	},
 }
 
@@ -102,6 +108,7 @@ func init() {
 	fuzzCmd.PersistentFlags().StringVarP(&ip, "address", "a", "", "IP address of the target machine")
 	fuzzCmd.PersistentFlags().StringVarP(&port, "port", "p", "", "port on which the viln app is running on the target machine")
 	fuzzCmd.PersistentFlags().StringVarP(&command, "command", "c", "", "command/function that needs to be fuzzed")
+	fuzzCmd.PersistentFlags().IntVarP(&poolSize, "pool", "s", 1, "Size for the goroutine pool for concurrent execution")
 
 	// Here you will define your flags and configuration settings.
 

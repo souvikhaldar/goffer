@@ -1,0 +1,18 @@
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/fuzz.go:69:9: cannot use nil as type bool in send
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/fuzz.go:57:11: syntax error: cannot use cd := <-crashed as value
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/fuzz.go:61:4: undefined: crashNotAlerted
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/fuzz.go:56:3: done declared but not used
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/fuzz.go:51:11: syntax error: unexpected := at end of statement
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/fuzz.go:112:39: cannot use &poolSize (type *int) as type *string in argument to fuzzCmd.PersistentFlags().StringVarP
+[00] (error exit: exit status 2)
