@@ -16,3 +16,56 @@
 [00] # github.com/souvikhaldar/goffer/cmd
 [00] cmd/fuzz.go:112:39: cannot use &poolSize (type *int) as type *string in argument to fuzzCmd.PersistentFlags().StringVarP
 [00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/generate.go:41:42: not enough arguments in call to generateCmd.PersistentFlags().StringVarP
+[00] cmd/generate.go:41:44: use of builtin len not in function call
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/generate.go:41:44: use of builtin len not in function call
+[00] cmd/generate.go:41:64: cannot use 0 (type untyped int) as type string in argument to generateCmd.PersistentFlags().StringVarP
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/generate.go:41:41: use of builtin len not in function call
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/generate.go:41:41: use of builtin len not in function call
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/generate.go:44:41: use of builtin len not in function call
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/generate.go:46:41: use of builtin len not in function call
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/generate.go:46:41: use of builtin len not in function call
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/cmd
+[00] cmd/fuzz.go:37:10: undefined: Fuzz
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/pkg/webfuzz
+[00] pkg/webfuzz/web.go:18:27: undefined: command
+[00] pkg/webfuzz/web.go:48:5: too many arguments to return
+[00] 	have (error)
+[00] 	want ()
+[00] pkg/webfuzz/web.go:51:35: undefined: command
+[00] pkg/webfuzz/web.go:54:5: too many arguments to return
+[00] 	have (error)
+[00] 	want ()
+[00] pkg/webfuzz/web.go:62:5: too many arguments to return
+[00] 	have (error)
+[00] 	want ()
+[00] (error exit: exit status 2)
+[00] # github.com/souvikhaldar/goffer/pkg/webfuzz
+[00] pkg/webfuzz/web.go:18:27: undefined: command
+[00] pkg/webfuzz/web.go:48:5: too many arguments to return
+[00] 	have (error)
+[00] 	want ()
+[00] pkg/webfuzz/web.go:51:35: undefined: command
+[00] pkg/webfuzz/web.go:54:5: too many arguments to return
+[00] 	have (error)
+[00] 	want ()
+[00] pkg/webfuzz/web.go:62:5: too many arguments to return
+[00] 	have (error)
+[00] 	want ()
+[00] (error exit: exit status 2)
+Interrupted (interrupt). Cleaning up children...

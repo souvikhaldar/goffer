@@ -17,37 +17,42 @@ package cmd
 
 import (
 	"fmt"
-	"log"
+	"strings"
 
-	"github.com/souvikhaldar/goffer/pkg/webfuzz"
+	"github.com/souvikhaldar/gorand"
 	"github.com/spf13/cobra"
 )
 
-// fuzzCmd represents the fuzz command
-var fuzzCmd = &cobra.Command{
-	Use:   "fuzz",
+// findCmd represents the find command
+
+var subStr string
+var findCmd = &cobra.Command{
+	Use:   "find",
 	Short: "A brief description of your command",
-	Long:  `Fuzzing!`,
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println("Fuzzing the machine: ", ip)
-		err := webfuzz.Fuzz(ip, port, command, poolSize)
-		if err != nil {
-			fmt.Println("Error fuzzing: ", err)
-		}
+		fmt.Println("find called")
+		randStr := gorand.RandStr(l)
+		addr := strings.Index(randStr, subStr)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(fuzzCmd)
+	offsetCmd.AddCommand(findCmd)
+	findCmd.LocalFlags().StringVarP(&subStr, "register", "r", "", "value of the register, Eg EIP")
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// fuzzCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// findCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// fuzzCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
+	// findCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
