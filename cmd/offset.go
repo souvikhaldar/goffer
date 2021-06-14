@@ -16,7 +16,11 @@ limitations under the License.
 package cmd
 
 import (
+	"bufio"
+	"encoding/hex"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/souvikhaldar/goffer/pkg/webfuzz"
 	"github.com/souvikhaldar/gorand"
@@ -37,9 +41,26 @@ to quickly create a Cobra application.`,
 		fmt.Println("offset called")
 		fmt.Println("Generating garbage string of length: ", l)
 		randStr := gorand.RandStr(l)
+		fmt.Println("Rand string: ", randStr)
 		if err := webfuzz.FuzzContent(ip, port, command, randStr, poolSize); err != nil {
 			fmt.Println("Unable to fuzz: ", err)
 		}
+		var eip string
+		fmt.Println("Enter value of EIP:")
+		reader := bufio.NewReader(os.Stdin)
+		eip, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println("Error reading from stdin: ", err)
+		}
+
+		eipStr, err := hex.DecodeString(eip)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("EIP: ", eip)
+		fmt.Println("EIP string: ", string(eipStr))
+		idx := strings.Index(randStr, string(eipStr))
+		fmt.Println("Starting address of EIP: ", idx)
 	},
 }
 

@@ -34,7 +34,7 @@ func Fuzz(ip, port, command string, poolSize int) error {
 	}()
 
 	notCrashed := true
-	for n := 100; notCrashed; n += 100 {
+	for n := 100; notCrashed; n += 1 {
 		pool <- 1
 		go func(n int, pool chan int) {
 			defer func() {

