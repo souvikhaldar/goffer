@@ -39,7 +39,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("offset called")
+		fmt.Println("Finding the offset")
 		fmt.Println("Generating garbage string of length: ", l)
 		randStr := gorand.RandStr(l)
 		if err := webfuzz.FuzzContent(ip, port, command, randStr, poolSize); err != nil {
