@@ -22,6 +22,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/souvikhaldar/goffer/pkg/utils"
 	"github.com/souvikhaldar/goffer/pkg/webfuzz"
 	"github.com/souvikhaldar/gorand"
 	"github.com/spf13/cobra"
@@ -41,7 +42,6 @@ to quickly create a Cobra application.`,
 		fmt.Println("offset called")
 		fmt.Println("Generating garbage string of length: ", l)
 		randStr := gorand.RandStr(l)
-		fmt.Println("Rand string: ", randStr)
 		if err := webfuzz.FuzzContent(ip, port, command, randStr, poolSize); err != nil {
 			fmt.Println("Unable to fuzz: ", err)
 		}
@@ -53,13 +53,15 @@ to quickly create a Cobra application.`,
 			fmt.Println("Error reading from stdin: ", err)
 		}
 
-		eipStr, err := hex.DecodeString(eip)
+		eipAscii, err := hex.DecodeString(eip)
 		if err != nil {
-			fmt.Println(err)
+			// gettign error `invalid byte: U+000A` always
+			//fmt.Println(err)
 		}
-		fmt.Println("EIP: ", eip)
-		fmt.Println("EIP string: ", string(eipStr))
-		idx := strings.Index(randStr, string(eipStr))
+		fmt.Println("EIP entered: ", eip)
+		eipRevStr := utils.ReverseStr(string(eipAscii))
+		//fmt.Println("EIP string: ", eipRevStr)
+		idx := strings.Index(randStr, eipRevStr)
 		fmt.Println("Starting address of EIP: ", idx)
 	},
 }
