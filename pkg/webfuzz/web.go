@@ -73,7 +73,41 @@ func Fuzz(ip, port, command string, poolSize int) error {
 	return nil
 }
 
-func FuzzContent(ip, port, command, content string, poolSize int) error {
+//func FuzzContent(
+//	ip, port, payload string,
+//	poolSize int,
+//) error {
+//
+//	conn, err := net.DialTimeout("tcp", ip+":"+port, 1000000*time.Microsecond)
+//	if err != nil {
+//		return fmt.Errorf("Faied to dial: %v", err)
+//	}
+//	defer conn.Close()
+//
+//	if err := conn.SetDeadline(time.Now().Add(1000000 * time.Microsecond)); err != nil {
+//		fmt.Printf("Can't set write deadline: %s", err)
+//		return err
+//	}
+//
+//	if _, err := conn.Write([]byte(command + content)); err != nil {
+//		fmt.Printf("Can't write more because: %s", err)
+//		return err
+//	}
+//	rcv := make([]byte, 2048)
+//	_, err = conn.Read(rcv)
+//	if err != nil {
+//		//log.Println()
+//		fmt.Printf("Could not read because: %s", err)
+//		return err
+//	}
+//	return nil
+//}
+
+func SendPayload(
+	ip, port string,
+	payload []byte,
+	poolSize int,
+) error {
 
 	conn, err := net.DialTimeout("tcp", ip+":"+port, 1000000*time.Microsecond)
 	if err != nil {
@@ -81,14 +115,12 @@ func FuzzContent(ip, port, command, content string, poolSize int) error {
 	}
 	defer conn.Close()
 
-	fmt.Println("Command: ", command)
-
 	if err := conn.SetDeadline(time.Now().Add(1000000 * time.Microsecond)); err != nil {
 		fmt.Printf("Can't set write deadline: %s", err)
 		return err
 	}
 
-	if _, err := conn.Write([]byte(command + content)); err != nil {
+	if _, err := conn.Write(payload); err != nil {
 		fmt.Printf("Can't write more because: %s", err)
 		return err
 	}

