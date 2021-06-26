@@ -1,6 +1,13 @@
 # Goffer
 A powerful tool for fuzzing web applications, in a fast concurent fashion. Written in go.
 
+# Installation
+1. Install Go.
+2. `go get github.com/souvikhaldar/goffer`
+
+# Tutorial
+[Tutorial YouTube link](https://youtu.be/byxOVwWImuc)
+
 # Features
 1. Fuzzing 
    Fuzzing a program named `OVERFLOW1` server on machine `10.10.85.251` running on port 1337   
