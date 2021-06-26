@@ -26,7 +26,7 @@ import (
 // fuzzCmd represents the fuzz command
 var fuzzCmd = &cobra.Command{
 	Use:   "fuzz",
-	Short: "A brief description of your command",
+	Short: "",
 	Long:  `Fuzzing!`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println("Fuzzing the machine: ", ip)
