@@ -31,7 +31,7 @@ import (
 // offsetCmd represents the offset command
 var offsetCmd = &cobra.Command{
 	Use:   "offset",
-	Short: "",
+	Short: "Find address of EIP",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Finding the offset")
